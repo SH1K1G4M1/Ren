@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Buttons</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            flex-direction: column;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .payment-button {
+            border: none;
+            border-radius: 12px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .payment-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .payment-button:active {
+            transform: translateY(1px);
+        }
+        
+        .payment-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .payment-button:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(25, 25);
+                opacity: 0;
+            }
+        }
+        
+        .qris-button {
+            background: linear-gradient(135deg, #00A86B 0%, #008552 100%);
+        }
+        
+        .dana-button {
+            background: linear-gradient(135deg, #00B0F0 0%, #0085CC 100%);
+        }
+        
+        .payment-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.4s;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .qris-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #eee;
+        }
+        
+        .dana-info {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .dana-info p {
+            margin: 8px 0;
+        }
+        
+        .copy-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .copied-message {
+            color: #4CAF50;
+            font-weight: 500;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="payment-button qris-button" id="qrisBtn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="QRIS" class="payment-icon">
+            QRIS
+        </button>
+        
+        <button class="payment-button dana-button" id="danaBtn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_DANA.svg" alt="DANA" class="payment-icon">
+            DANA
+        </button>
+    </div>
+    
+    <!-- QRIS Modal -->
+    <div class="modal" id="qrisModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeQris">&times;</span>
+            <h2>QRIS Payment</h2>
+            <img src="received_1881760629291287.jpeg" alt="QR Code" class="qris-image">
+            <p>Scan QR code untuk melakukan pembayaran</p>
+        </div>
+    </div>
+    
+    <!-- DANA Modal -->
+    <div class="modal" id="danaModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeDana">&times;</span>
+            <h2>DANA Payment</h2>
+            <div class="dana-info">
+                <p><strong>Nomor DANA:</strong> 083821127223</p>
+                <p><strong>Nama:</strong> R/N</p>
+            </div>
+            <button class="copy-btn" id="copyDanaBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                </svg>
+                Salin Nomor
+            </button>
+            <p class="copied-message" id="copiedMessage">Nomor berhasil disalin!</p>
+        </div>
+    </div>
+    
+    <script>
+        // Get elements
+        const qrisBtn = document.getElementById('qrisBtn');
+        const danaBtn = document.getElementById('danaBtn');
+        const qrisModal = document.getElementById('qrisModal');
+        const danaModal = document.getElementById('danaModal');
+        const closeQris = document.getElementById('closeQris');
+        const closeDana = document.getElementById('closeDana');
+        const copyDanaBtn = document.getElementById('copyDanaBtn');
+        const copiedMessage = document.getElementById('copiedMessage');
+        
+        // Show QRIS modal
+        qrisBtn.addEventListener('click', () => {
+            qrisModal.style.display = 'flex';
+        });
+        
+        // Show DANA modal
+        danaBtn.addEventListener('click', () => {
+            danaModal.style.display = 'flex';
+            copiedMessage.classList.remove('show');
+        });
+        
+        // Close QRIS modal
+        closeQris.addEventListener('click', () => {
+            qrisModal.style.display = 'none';
+        });
+        
+        // Close DANA modal
+        closeDana.addEventListener('click', () => {
+            danaModal.style.display = 'none';
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === qrisModal) {
+                qrisModal.style.display = 'none';
+            }
+            if (e.target === danaModal) {
+                danaModal.style.display = 'none';
+            }
+        });
+        
+        // Copy DANA number
+        copyDanaBtn.addEventListener('click', () => {
+            const danaNumber = '083821127223';
+            navigator.clipboard.writeText(danaNumber).then(() => {
+                copiedMessage.classList.add('show');
+                setTimeout(() => {
+                    copiedMessage.classList.remove('show');
+                }, 2000);
+            });
+        });
+        
+        // Add ripple effect to all buttons
+        document.querySelectorAll('.payment-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Ripple effect is handled by CSS
+            });
+        });
+    </script>
+</body>
+</html>
